@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCVET AI Skilling Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: image('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
+            background-attachment: fixed;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            background: white;
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .ai-tag {
+            background: var(--accent);
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-left: 10px;
+            vertical-align: super;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: -1px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .tab {
+            padding: 18px 30px;
+            cursor: pointer;
+            background: #f8fafc;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .tab:hover {
+            background: white;
+        }
+        
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid var(--primary);
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        button {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.07);
+        }
+        
+        .pathway {
+            border-left: 4px solid var(--secondary);
+            padding-left: 25px;
+            margin: 25px 0;
+            position: relative;
+        }
+        
+        .pathway::before {
+            content: "";
+            position: absolute;
+            left: -4px;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--secondary), var(--primary));
+            border-radius: 2px;
+        }
+        
+        .pathway-step {
+            margin-bottom: 20px;
+            position: relative;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .pathway-step:before {
+            content: "";
+            position: absolute;
+            left: -33px;
+            top: 24px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--secondary);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--secondary);
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            background: linear-gradient(to right, #e0f2fe, #dbeafe);
+            color: var(--primary-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin: 5px 5px 5px 0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: #eee;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .ai-recommendation {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #bae6fd;
+            position: relative;
+        }
+        
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .ai-badge {
+            background: var(--accent);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .visualization {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .career-map {
+            height: 300px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .floating-action {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        
+        .floating-action:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .language-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: var(--gray);
+            font-size: 14px;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .language-selector {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-top: 15px;
+            }
+        }
+        
+        /* Advanced features */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid var(--primary);
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary); }
+        }
+        
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--primary), 0 0 20px var(--primary); }
+            to { box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--secondary), 0 0 40px var(--secondary); }
+        }
+        
+        .three-d {
+            transform-style: preserve-3d;
+            transform: perspective(1000px) rotateX(10deg);
+        }
+        
+        .hover-3d:hover {
+            transform: perspective(1000px) rotateX(0deg) rotateY(10deg) translateZ(20px);
+            transition: transform 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1>NCVET Skilling Assistant <span class="ai-tag">AI POWERED</span></h1>
+                </div>
+                <div class="language-selector">
+                    <button class="language-btn">
+                        <i class="fas fa-globe"></i> English <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <div class="tab active" data-tab="profile">
+                <i class="fas fa-user-circle"></i> Learner Profile
+            </div>
+            <div class="tab" data-tab="pathways">
+                <i class="fas fa-road"></i> Training Pathways
+            </div>
+            <div class="tab" data-tab="dashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </div>
+            <div class="tab" data-tab="future">
+                <i class="fas fa-robot"></i> AI Career Simulator
+            </div>
+        </div>
+
+        <div class="tab-content active" id="profile">
+            <h2>Create Your Intelligent Learner Profile</h2>
+            <p class="typewriter">Our AI will analyze your profile to create a personalized skilling journey...</p>
+            
+            <div class="form-group">
+                <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+            
+            <div class="form-group">
+                <label for="age"><i class="fas fa-birthday-cake"></i> Age</label>
+                <input type="number" id="age" placeholder="Enter your age">
+            </div>
+            
+            <div class="form-group">
+                <label for="education"><i class="fas fa-graduation-cap"></i> Highest Education</label>
+                <select id="education">
+                    <option value="">Select your education level</option>
+                    <option value="8th">8th Grade</option>
+                    <option value="10th">10th Grade</option>
+                    <option value="12th">12th Grade</option>
+                    <option value="diploma">Diploma</option>
+                    <option value="graduate">Graduate</option>
+                    <option value="postgraduate">Post Graduate</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="background"><i class="fas fa-book"></i> Academic Background</label>
+                <select id="background">
+                    <option value="">Select your academic background</option>
+                    <option value="science">Science</option>
+                    <option value="commerce">Commerce</option>
+                    <option value="arts">Arts</option>
+                    <option value="vocational">Vocational Training</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="skills"><i class="fas fa-tools"></i> Current Skills (comma separated)</label>
+                <div class="input-with-icon">
+                    <input type="text" id="skills" placeholder="e.g., Communication, Basic Computer, Carpentry">
+                    <i class="input-icon fas fa-magic"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="interests"><i class="fas fa-heart"></i> Career Interests</label>
+                <select id="interests">
+                    <option value="">Select your career interest</option>
+                    <option value="it">Information Technology</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="construction">Construction</option>
+                    <option value="retail">Retail</option>
+                    <option value="automotive">Automotive</option>
+                    <option value="tourism">Tourism & Hospitality</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="aspirations"><i class="fas fa-star"></i> Career Aspirations</label>
+                <textarea id="aspirations" placeholder="Describe your career goals and aspirations" rows="3"></textarea>
+            </div>
+            
+            <button id="generatePathway" class="pulse">
+                <i class="fas fa-brain"></i> Generate AI-Powered Pathway
+            </button>
+        </div>
+
+        <div class="tab-content" id="pathways">
+            <h2>Your Personalized Training Pathway</h2>
+            <p>AI-generated skill development journey aligned with NSQF and industry demands</p>
+            
+            <div class="ai-recommendation">
+                <div class="ai-header">
+                    <i class="fas fa-robot fa-lg" style="color: var(--accent);"></i>
+                    <span class="ai-badge">AI RECOMMENDATION</span>
+                </div>
+                <p>Based on your profile and current market trends, I recommend focusing on <strong>Full Stack Development</strong> with specializations in cloud technologies. This pathway has a 92% employment rate within 6 months of completion.</p>
+            </div>
+            
+            <div class="card hover-3d">
+                <h3>Recommended Career Path: <span id="careerTitle">Full Stack Developer</span></h3>
+                <p>NSQF Level: <span id="nsqfLevel">Level 5</span></p>
+                <p>Expected Starting Salary: <strong>₹4.5-6.5 LPA</strong></p>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 30%"></div>
+                </div>
+                <p>Pathway completion: <span id="completion">30%</span> (based on your current skills)</p>
+            </div>
+            
+            <div class="pathway">
+                <h3>Your AI-Curated Learning Pathway</h3>
+                
+                <div class="pathway-step">
+                    <h4><i class="fas fa-layer-group"></i> Foundation Skills (3-6 months)</h4>
+                    <p>Basic digital literacy, communication skills, and mathematical aptitude</p>
+                    <div>
+                        <span class="skill-tag">Digital Literacy</span>
+                        <span class="skill-tag">Communication</span>
+                        <span class="skill-tag">Basic Math</span>
+                    </div>
+                </div>
+                
+                <div class="pathway-step">
+                    <h4><i class="fas fa-code"></i> Core Technical Skills (6-12 months)</h4>
+                    <p>Programming fundamentals, database basics, and software development concepts</p>
+                    <div>
+                        <span class="skill-tag">Python Programming</span>
+                        <span class="skill-tag">SQL Databases</span>
+                        <span class="skill-tag">Web Development</span>
+                        <span class="skill-tag">JavaScript</span>
+                    </div>
+                </div>
+                
+                <div class="pathway-step">
+                    <h4><i class="fas fa-certificate"></i> Specialization (6-9 months)</h4>
+                    <p>Choose a specialization based on market demand and your interests</p>
+                    <div>
+                        <span class="skill-tag">Frontend Frameworks</span>
+                        <span class="skill-tag">Backend Development</span>
+                        <span class="skill-tag">Cloud Deployment</span>
+                        <span class="skill-tag">DevOps Fundamentals</span>
+                    </div>
+                </div>
+                
+                <div class="pathway-step">
+                    <h4><i class="fas fa-briefcase"></i> On-the-Job Training (3-6 months)</h4>
+                    <p>Gain practical experience through internships or apprenticeships</p>
+                    <div>
+                        <span class="skill-tag">Industry Project</span>
+                        <span class="skill-tag">Portfolio Development</span>
+                        <span class="skill-tag">Agile Methodology</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-graduation-cap"></i> Recommended Courses & Certifications</h3>
+                <ul id="courseList">
+                    <li><i class="fas fa-certificate" style="color: var(--success);"></i> NSQF Level 4 Certificate in IT Systems</li>
+                    <li><i class="fas fa-certificate" style="color: var(--success);"></i> NSQF Level 5 Diploma in Software Development</li>
+                    <li><i class="fas fa-certificate" style="color: var(--success);"></i> Micro-credential in Cloud Technologies</li>
+                    <li><i class="fas fa-certificate" style="color: var(--success);"></i> Industry Certification in Python Programming</li>
+                    <li><i class="fas fa-certificate" style="color: var(--success);"></i> Full Stack Development Nanodegree</li>
+                </ul>
+            </div>
+            
+            <div class="visualization">
+                <h3><i class="fas fa-chart-bar"></i> Skill Demand Visualization</h3>
+                <canvas id="skillDemandChart" height="150"></canvas>
+            </div>
+        </div>
+
+        <div class="tab-content" id="dashboard">
+            <h2>Intelligent Skilling Dashboard</h2>
+            <p>Track your progress and explore opportunities with AI-powered insights</p>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <i class="stat-icon fas fa-bullseye"></i>
+                    <h3>Skill Match Score</h3>
+                    <div class="stat-number">78%</div>
+                    <p>Based on current job market requirements</p>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="stat-icon fas fa-signal"></i>
+                    <h3>Recommended NSQF Level</h3>
+                    <div class="stat-number">5</div>
+                    <p>Appropriate for your background and goals</p>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="stat-icon fas fa-clock"></i>
+                    <h3>Training Duration</h3>
+                    <div class="stat-number">18-24</div>
+                    <p>Months to complete recommended pathway</p>
+                </div>
+
+                <div class="stat-card">
+                    <i class="stat-icon fas fa-rupee-sign"></i>
+                    <h3>Salary Potential</h3>
+                    <div class="stat-number">5.5L</div>
+                    <p>Average annual package after completion</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-user-graduate"></i> Your Skill Profile</h3>
+                <p>Current skills assessment versus required skills for your target role</p>
+                
+                <h4>Technical Skills</h4>
+                <p>Programming Fundamentals</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%"></div>
+                </div>
+                
+                <p>Database Knowledge</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 20%"></div>
+                </div>
+                
+                <p>Web Technologies</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 30%"></div>
+                </div>
+                
+                <p>Cloud Computing</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 10%"></div>
+                </div>
+                
+                <h4>Soft Skills</h4>
+                <p>Communication</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%"></div>
+                </div>
+                
+                <p>Problem Solving</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                </div>
+                
+                <p>Teamwork</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%"></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-industry"></i> Labor Market Insights</h3>
+                <p>Current demand for software developers in India is growing at 18% annually</p>
+                <p>Top hiring cities: Bangalore, Hyderabad, Pune, Delhi/NCR, Chennai</p>
+                <p>Emerging skills: Cloud Computing, AI/ML, DevOps, Blockchain</p>
+                
+                <div class="career-map">
+                    <canvas id="careerMap"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="future">
+            <h2>AI Career Simulator</h2>
+            
+            <div class="card three-d">
+                <h3><i class="fas fa-vr-cardboard"></i> Virtual Career Experience</h3>
+                <p>Select a role to simulate a day in the life of that professional:</p>
+                
+                <div style="display: flex; gap: 15px; margin: 20px 0;">
+                    <button class="role-btn" data-role="developer">
+                        <i class="fas fa-code"></i> Software Developer
+                    </button>
+                    <button class="role-btn" data-role="analyst">
+                        <i class="fas fa-chart-pie"></i> Data Analyst
+                    </button>
+                    <button class="role-btn" data-role="cloud">
+                        <i class="fas fa-cloud"></i> Cloud Engineer
+                    </button>
+                </div>
+                
+                <div id="simulation-content" style="min-height: 300px; background: #f8fafc; border-radius: 10px; padding: 20px; text-align: center; display: flex; align-items: center; justify-content: center;">
+                    <p>Select a role to start simulation</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-calculator"></i> Career ROI Calculator</h3>
+                <p>See how your investment in skilling pays off over time</p>
+                
+                <div class="form-group">
+                    <label for="investment">Initial Investment (₹)</label>
+                    <input type="range" id="investment" min="50000" max="500000" step="50000" value="150000">
+                    <output id="investment-value">₹1,50,000</output>
+                </div>
+                
+                <div class="visualization">
+                    <canvas id="roiChart" height="200"></canvas>
+                </div>
+            </div>
+            
+            <div class="ai-recommendation">
+                <div class="ai-header">
+                    <i class="fas fa-robot fa-lg" style="color: var(--accent);"></i>
+                    <span class="ai-badge">AI PREDICTION</span>
+                </div>
+                <p>Based on your profile and market trends, I predict <strong>85% probability</strong> of career success in your chosen path. The key factors in your favor are your learning agility and communication skills. Areas to develop: technical foundation and specialized certifications.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-action">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>NCVET Skilling Assistant Prototype | AI-powered vocational pathway recommendation system</p>
+            <p>This is a demonstration prototype for the NCVET Skilling Challenge</p>
+            <p>© 2023 NCVET - National Council for Vocational Education and Training</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab navigation functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Generate pathway button functionality
+        document.getElementById('generatePathway').addEventListener('click', () => {
+            // Get form values
+            const interest = document.getElementById('interests').value;
+            const education = document.getElementById('education').value;
+            
+            // Simple recommendation logic based on selections
+            let careerTitle, nsqfLevel;
+            
+            if (interest === 'it') {
+                careerTitle = 'Full Stack Developer';
+                nsqfLevel = 'Level 5';
+            } else if (interest === 'healthcare') {
+                careerTitle = 'Healthcare Assistant';
+                nsqfLevel = 'Level 4';
+            } else if (interest === 'construction') {
+                careerTitle = 'Construction Supervisor';
+                nsqfLevel = 'Level 4';
+            } else if (interest === 'retail') {
+                careerTitle = 'Retail Manager';
+                nsqfLevel = 'Level 5';
+            } else {
+                careerTitle = 'Skilled Professional';
+                nsqfLevel = 'Level 4';
+            }
+            
+            // Adjust based on education level
+            if (education === 'graduate' || education === 'postgraduate') {
+                nsqfLevel = 'Level 6-7';
+            } else if (education === '12th' || education === 'diploma') {
+                nsqfLevel = 'Level 5';
+            } else if (education === '10th') {
+                nsqfLevel = 'Level 4';
+            } else {
+                nsqfLevel = 'Level 3';
+            }
+            
+            // Update the pathway content
+            document.getElementById('careerTitle').textContent = careerTitle;
+            document.getElementById('nsqfLevel').textContent = nsqfLevel;
+            
+            // Switch to the pathways tab
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector('.tab[data-tab="pathways"]').classList.add('active');
+            document.getElementById('pathways').classList.add('active');
+            
+            // Initialize charts
+            initCharts();
+        });
+        
+        // Sample data for demonstration
+        const sampleData = {
+            name: "Rahul Sharma",
+            age: 22,
+            education: "12th",
+            background: "science",
+            skills: "Communication, Basic Computer",
+            interests: "it",
+            aspirations: "I want to become a software developer and work in a tech company"
+        };
+        
+        // Pre-fill form with sample data for demo purposes
+        window.addEventListener('load', () => {
+            document.getElementById('name').value = sampleData.name;
+            document.getElementById('age').value = sampleData.age;
+            document.getElementById('education').value = sampleData.education;
+            document.getElementById('background').value = sampleData.background;
+            document.getElementById('skills').value = sampleData.skills;
+            document.getElementById('interests').value = sampleData.interests;
+            document.getElementById('aspirations').value = sampleData.aspirations;
+            
+            // Initialize investment slider
+            const investmentSlider = document.getElementById('investment');
+            const investmentValue = document.getElementById('investment-value');
+            
+            investmentSlider.addEventListener('input', () => {
+                investmentValue.textContent = `₹${Number(investmentSlider.value).toLocaleString('en-IN')}`;
+            });
+        });
+        
+        // Initialize charts
+        function initCharts() {
+            // Skill demand chart
+            const skillCtx = document.getElementById('skillDemandChart').getContext('2d');
+            new Chart(skillCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Python', 'JavaScript', 'Cloud', 'DevOps', 'React', 'Node.js'],
+                    datasets: [{
+                        label: 'Skill Demand Index',
+                        data: [85, 78, 92, 88, 82, 79],
+                        backgroundColor: [
+                            'rgba(37, 99, 235, 0.7)',
+                            'rgba(139, 92, 246, 0.7)',
+                            'rgba(236, 72, 153, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(37, 99, 235, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(37, 99, 235)',
+                            'rgb(139, 92, 246)',
+                            'rgb(236, 72, 153)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(37, 99, 235)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // ROI chart
+            const roiCtx = document.getElementById('roiChart').getContext('2d');
+            new Chart(roiCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+                    datasets: [{
+                        label: 'Estimated Earnings (Lakhs ₹)',
+                        data: [4.5, 6.2, 8.5, 11.2, 14.5],
+                        borderColor: 'rgb(37, 99, 235)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Career simulation
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const role = btn.dataset.role;
+                const simulationContent = document.getElementById('simulation-content');
+                
+                if (role === 'developer') {
+                    simulationContent.innerHTML = `
+                        <div style="text-align: left;">
+                            <h3><i class="fas fa-code"></i> A Day in the Life of a Software Developer</h3>
+                            <div style="display: flex; gap: 20px; margin-top: 20px;">
+                                <div style="flex: 1;">
+                                    <h4>Morning (9:00 AM - 12:00 PM)</h4>
+                                    <ul>
+                                        <li>Stand-up meeting with team</li>
+                                        <li>Code review for recent features</li>
+                                        <li>Focus time for new development</li>
+                                    </ul>
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4>Afternoon (1:00 PM - 5:00 PM)</h4>
+                                    <ul>
+                                        <li>Collaborate with UX designers</li>
+                                        <li>Implement new user authentication</li>
+                                        <li>Write unit tests for code</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px;">
+                                <h4>Skills Utilized:</h4>
+                                <span class="skill-tag">Problem Solving</span>
+                                <span class="skill-tag">JavaScript</span>
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">Team Collaboration</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (role === 'analyst') {
+                    simulationContent.innerHTML = `
+                        <div style="text-align: left;">
+                            <h3><i class="fas fa-chart-pie"></i> A Day in the Life of a Data Analyst</h3>
+                            <div style="display: flex; gap: 20px; margin-top: 20px;">
+                                <div style="flex: 1;">
+                                    <h4>Morning (9:00 AM - 12:00 PM)</h4>
+                                    <ul>
+                                        <li>Data cleaning and preprocessing</li>
+                                        <li>Meeting with stakeholders</li>
+                                        <li>Exploratory data analysis</li>
+                                    </ul>
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4>Afternoon (1:00 PM - 5:00 PM)</h4>
+                                    <ul>
+                                        <li>Build predictive models</li>
+                                        <li>Create visualization dashboards</li>
+                                        <li>Prepare reports for management</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px;">
+                                <h4>Skills Utilized:</h4>
+                                <span class="skill-tag">Statistical Analysis</span>
+                                <span class="skill-tag">Python</span>
+                                <span class="skill-tag">Data Visualization</span>
+                                <span class="skill-tag">SQL</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (role === 'cloud') {
+                    simulationContent.innerHTML = `
+                        <div style="text-align: left;">
+                            <h3><i class="fas fa-cloud"></i> A Day in the Life of a Cloud Engineer</h3>
+                            <div style="display: flex; gap: 20px; margin-top: 20px;">
+                                <div style="flex: 1;">
+                                    <h4>Morning (9:00 AM - 12:00 PM)</h4>
+                                    <ul>
+                                        <li>Monitor cloud infrastructure</li>
+                                        <li>Optimize resource allocation</li>
+                                        <li>Security audit and compliance</li>
+                                    </ul>
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4>Afternoon (1:00 PM - 5:00 PM)</h4>
+                                    <ul>
+                                        <li>Automate deployment pipelines</li>
+                                        <li>Design scalable architecture</li>
+                                        <li>Troubleshoot performance issues</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px;">
+                                <h4>Skills Utilized:</h4>
+                                <span class="skill-tag">AWS/Azure</span>
+                                <span class="skill-tag">Kubernetes</span>
+                                <span class="skill-tag">Infrastructure as Code</span>
+                                <span class="skill-tag">Networking</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        });
+        
+        // Initialize charts when page loads
+        window.addEventListener('load', initCharts);
+    </script>
+</body>
+</html>
