@@ -47,4 +47,6 @@ SkillPath is designed and developed as part of **SIH 2025**,
 with a vision to empower India’s youth through **AI-powered, future-ready skilling**.
 
 ## By Team
-<img width="1024" height="363" alt="Logo" src="https://github.com/user-attachments/assets/31511503-a683-4b18-9ee4-4838a64a67b0" style="border-radius:16px;" />
+<img width="1024" height="363" alt="Logo" src="https://github.com/user-attachments/assets/e95249ec-a3cc-4ad3-88f8-b719699e8f2e" style="border-radius:16px;" />
+
+
