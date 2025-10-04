@@ -45,3 +45,6 @@ SkillPath bridges this gap by:
 ## 🙌 Credits
 SkillPath is designed and developed as part of **SIH 2025**,  
 with a vision to empower India’s youth through **AI-powered, future-ready skilling**.
+
+## By Team
+![Ignite Logo](https://github.com/user-attachments/assets/31511503-a683-4b18-9ee4-4838a64a67b0)
